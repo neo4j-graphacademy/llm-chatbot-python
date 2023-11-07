@@ -1,6 +1,7 @@
 import streamlit as st
 from utils import write_message
 
+# tag::setup[]
 # Page Config
 st.set_page_config("Ebert", page_icon=":movie_camera:")
 
@@ -9,7 +10,9 @@ if "messages" not in st.session_state:
     st.session_state.messages = [
         {"role": "assistant", "content": "Hi, I'm the GraphAcademy Chatbot!  How can I help you?"},
     ]
+# end::setup[]
 
+# tag::submit[]
 # Submit handler
 def handle_submit(message):
     """
@@ -22,18 +25,13 @@ def handle_submit(message):
     # Handle the response
     with st.spinner('Thinking...'):
         # # TODO: Replace this with a call to your LLM
-        # from time import sleep
-        # sleep(1)
-        # write_message('assistant', message)
-
-        # from handlers.vector import generate_response
-        # from handlers.cypher import generate_response
-        from handlers.agent import generate_response
-
-        response = generate_response(message)
-        write_message('assistant', response)
+        from time import sleep
+        sleep(1)
+        write_message('assistant', message)
+# end::submit[]
 
 
+# tag::chat[]
 with st.container():
     # Display messages in Session State
     for message in st.session_state.messages:
@@ -46,3 +44,4 @@ with st.container():
 
         # Generate a response
         handle_submit(prompt)
+# end::chat[]

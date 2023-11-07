@@ -6,6 +6,7 @@ from langchain.prompts.chat import (
 )
 
 
+# Basic Prompt
 BASIC_PROMPT = PromptTemplate.from_template("""
 You are a movie expert providing customers with movie recommendations.
 Answer the following question to the best of your ability.
@@ -14,7 +15,30 @@ Question: {question}
 Answer:
 """)
 
+# RAG Vector Prompts
+GENERAL_SYSTEM_TEMPLATE = """
+You are a movie expert providing customers with movie recommendations.
+Answer the following question to the best of your ability.
+Use the following pieces of context to answer the user's question.
 
+Make sure to rely on information from the answers and not on questions to provide accuate responses.
+
+----
+{summaries}
+----
+
+"""
+
+GENERAL_USER_TEMPLATE = """
+Question:
+
+---
+{question}
+---
+"""
+
+
+# Cypher Prompts
 CYPHER_QA_PROMPT = SystemMessagePromptTemplate.from_template("""
 You are a movie expert providing customers with information about movies.
 Answer the following question to the best of your ability.
