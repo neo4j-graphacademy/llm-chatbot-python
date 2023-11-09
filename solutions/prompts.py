@@ -5,53 +5,18 @@ from langchain.prompts.chat import (
     HumanMessagePromptTemplate,
 )
 
+# The QA Chain for Authoring Cypher
+from langchain.chains import GraphCypherQAChain
 
-# Basic Prompt
-BASIC_PROMPT = PromptTemplate.from_template("""
-You are a movie expert providing customers with movie recommendations.
-Answer the following question to the best of your ability.
-
-Question: {question}
-Answer:
-""")
-
-# RAG Vector Prompts
-GENERAL_SYSTEM_TEMPLATE = """
-You are a movie expert providing customers with movie recommendations.
-Answer the following question to the best of your ability.
-Use the following pieces of context to answer the user's question.
-
-Make sure to rely on information from the answers and not on questions to provide accuate responses.
-
-----
-{summaries}
-----
-
-"""
-
-GENERAL_USER_TEMPLATE = """
-Question:
-
----
-{question}
----
-"""
+# The Default prompts used by the QA Chain
+from langchain.chains.graph_qa.prompts import CYPHER_GENERATION_PROMPT, CYPHER_QA_PROMPT
 
 
-# Cypher Prompts
-CYPHER_QA_PROMPT = SystemMessagePromptTemplate.from_template("""
-You are a movie expert providing customers with information about movies.
-Answer the following question to the best of your ability.
-Use the following pieces of context to answer the user's question.
+# tag::finetuned[]
 
-Make sure to rely on information from the answers and not on questions to provide accuate responses.
+# end::finetuned[]
 
-----
-{context}
-----
-""")
-
-
+# tag::fewshot[]
 FEWSHOT_CYPHER_GENERATION_TEMPLATE = """
 You are an expert Neo4j Developer translating user questions into Cypher to answer questions about movies and provide recommendations.
 Convert the user's question based on the schema.
@@ -90,3 +55,4 @@ Use Neo4j 5 Cypher syntax.  When checking a property is not null, use `IS NOT NU
 
 Question: {question}
 """
+# end::fewshot[]

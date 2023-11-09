@@ -1,5 +1,6 @@
 import streamlit as st
 
+# tag::write_message[]
 def write_message(role, content, save = True):
     """
     This is a helper function that saves a message to the
@@ -12,3 +13,4 @@ def write_message(role, content, save = True):
     # Write to UI
     with st.chat_message(role):
         st.markdown(content)
+# end::write_message[]
