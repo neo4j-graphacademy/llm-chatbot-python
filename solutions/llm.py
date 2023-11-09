@@ -2,7 +2,10 @@
 import streamlit as st
 from langchain.chat_models import ChatOpenAI
 
-llm = ChatOpenAI(openai_api_key=st.secrets["OPENAI_API_KEY"], model='gpt-4')
+llm = ChatOpenAI(
+    openai_api_key=st.secrets["OPENAI_API_KEY"],
+    model=st.secrets["OPENAI_MODEL"],
+)
 # end::llm[]
 
 # tag::embedding[]
