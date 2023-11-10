@@ -3,7 +3,9 @@ from langchain.tools import Tool
 # end::importtool[]
 from langchain.agents import initialize_agent, AgentType
 from langchain.agents import ConversationalChatAgent
+# tag::importmemory[]
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
+# end::importmemory[]
 
 from solutions.llm import llm
 
