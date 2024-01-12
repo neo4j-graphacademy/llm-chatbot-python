@@ -32,21 +32,29 @@ def generate_response(prompt):
 """
 The `kg_qa` can now be registered as a tool within the agent.
 
-# tag::import[]
+# tag::importcypherqa[]
 from tools.cypher import cypher_qa
-# end::import[]
+# end::importcypherqa[]
 
 # tag::tool[]
 tools = [
     Tool.from_function(
+        name="General Chat",
+        description="For general chat not covered by other tools",
+        func=llm.invoke,
+        return_direct=True
+        ),
+    Tool.from_function(
         name="Vector Search Index",
         description="Provides information about movie plots using Vector Search",
         func = kg_qa,
+        return_direct=True
     ),
     Tool.from_function(
         name="Graph Cypher QA Chain",  # <1>
         description="Provides information about Movies including their Actors, Directors and User reviews", # <2>
         func = cypher_qa, # <3>
+        return_direct=True
     ),
 ]
 # end::tool[]
