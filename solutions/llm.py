@@ -9,7 +9,7 @@ llm = ChatOpenAI(
 # end::llm[]
 
 # tag::embedding[]
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 embeddings = OpenAIEmbeddings(
     openai_api_key=st.secrets["OPENAI_API_KEY"]

@@ -1,6 +1,8 @@
+# tag::importst[]
 import streamlit as st
+# end::importst[]
 # tag::importvector[]
-from langchain.vectorstores.neo4j_vector import Neo4jVector
+from langchain_community.vectorstores.neo4j_vector import Neo4jVector
 # end::importvector[]
 # tag::importqa[]
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
@@ -80,12 +82,23 @@ The `kg_qa` can now be registered as a tool within the agent.
 from langchain.tools import Tool
 # end::importtool[]
 
+# tag::importkgqa[]
+from tools.vector import kg_qa
+# end::importkgqa[]
+
 # tag::tool[]
 tools = [
+    Tool.from_function(
+        name="General Chat",
+        description="For general chat not covered by other tools",
+        func=llm.invoke,
+        return_direct=True
+        ),
     Tool.from_function(
         name="Vector Search Index",  # <1>
         description="Provides information about movie plots using Vector Search", # <2>
         func = kg_qa, # <3>
+        return_direct=True
     )
 ]
 # end::tool[]
