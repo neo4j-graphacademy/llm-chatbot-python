@@ -21,7 +21,7 @@ tools = [
         description="For general chat not covered by other tools",
         func=llm.invoke,
         return_direct=True
-        ),
+    ),
     Tool.from_function(
         name="Cypher QA",
         description="Provide information about movies questions using Cypher",
@@ -50,9 +50,9 @@ memory = ConversationBufferWindowMemory(
 agent_prompt = hub.pull("hwchase17/react-chat")
 agent = create_react_agent(llm, tools, agent_prompt)
 agent_executor = AgentExecutor(
-    agent=agent, 
-    tools=tools, 
-    memory=memory, 
+    agent=agent,
+    tools=tools,
+    memory=memory,
     verbose=True
     )
 # end::agent[]
