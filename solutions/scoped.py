@@ -89,7 +89,7 @@ Previous conversation history:
 New input: {input}
 {agent_scratchpad}
 """)
-# end::prompt][]
+# end::prompt[]
 
 # tag::agent[]
 agent = create_react_agent(llm, tools, agent_prompt)
