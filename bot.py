@@ -34,16 +34,15 @@ def handle_submit(message):
 
 
 # tag::chat[]
-with st.container():
-    # Display messages in Session State
-    for message in st.session_state.messages:
-        write_message(message['role'], message['content'], save=False)
+# Display messages in Session State
+for message in st.session_state.messages:
+    write_message(message['role'], message['content'], save=False)
 
-    # Handle any user input
-    if prompt := st.chat_input("What is up?"):
-        # Display user message in chat message container
-        write_message('user', prompt)
+# Handle any user input
+if prompt := st.chat_input("What is up?"):
+    # Display user message in chat message container
+    write_message('user', prompt)
 
-        # Generate a response
-        handle_submit(prompt)
+    # Generate a response
+    handle_submit(prompt)
 # end::chat[]
