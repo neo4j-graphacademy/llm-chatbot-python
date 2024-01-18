@@ -1,6 +1,6 @@
 # tag::llm[]
 import streamlit as st
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
     openai_api_key=st.secrets["OPENAI_API_KEY"],
