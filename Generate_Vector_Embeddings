@@ -1,0 +1,65 @@
+import os
+import csv
+import streamlit as st
+
+from openai import OpenAI
+from neo4j import GraphDatabase
+
+from dotenv import load_dotenv
+load_dotenv()
+
+openai_api_key=st.secrets["OPENAI_API_KEY"]
+
+def get_legal_regulation_texts(limit=None):
+    driver = GraphDatabase.driver(
+        st.secrets('NEO4J_URI'),
+        auth=(st.secrets('NEO4J_USERNAME'), st.secrets('NEO4J_PASSWORD'))
+    )
+
+    driver.verify_connectivity()
+
+    query = """MATCH (m:LegalRegulation) WHERE m.Text IS NOT NULL
+    RETURN m.Unique_ID AS UniqueId, m.Name AS name, m.Text AS text"""
+
+    if limit is not None:
+        query += f' LIMIT {limit}'
+
+    legalregulations, summary, keys = driver.execute_query(
+        query
+    )
+
+    driver.close()
+
+    return legalregulations
+
+def generate_embeddings(file_name, limit=None):
+
+    csvfile_out = open(file_name, 'w', encoding='utf8', newline='')
+    fieldnames = ['UniqueId','embedding']
+    output_plot = csv.DictWriter(csvfile_out, fieldnames=fieldnames)
+    output_plot.writeheader()
+
+    legalregulations = get_legal_regulation_texts(limit=limit)
+
+    print(len(legalregulations))
+    
+    llm = OpenAI()
+
+    for legalregulation in legalregulations:
+        print(legalregulation['name'])
+
+        text = f"{legalregulation['name']}: {legalregulation['text']}"
+        response = llm.embeddings.create(
+            input=text,
+            model='text-embedding-ada-002'
+        )
+
+        output_plot.writerow({
+            'UniqueId': legalregulation['UniqueId'],
+            'embedding': response.data[0].embedding
+        })
+
+    csvfile_out.close()
+
+# generate_embeddings('.\data\\movie-plot-embeddings.csv',limit=1)
+generate_embeddings('.\data\\Legal-Regulation-embeddings.csv')

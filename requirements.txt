@@ -3,3 +3,6 @@ openai
 langchain_openai
 neo4j-driver
 streamlit
+pandas
+neo4j
+python-dotenv
