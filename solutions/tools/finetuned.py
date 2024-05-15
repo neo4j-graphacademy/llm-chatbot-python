@@ -41,4 +41,4 @@ cypher_qa = GraphCypherQAChain.from_llm(
     verbose=True,
     cypher_prompt=cypher_prompt
 )
-# tag::cypher-qa[]
+# end::cypher-qa[]
