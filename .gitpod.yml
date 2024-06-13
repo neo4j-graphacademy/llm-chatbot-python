@@ -1,5 +1,3 @@
 tasks:
-  - init: >
-      pyenv install --force 3.11 &&
-      pyenv global 3.11 &&
+  - init: 
       pip install -r requirements.txt
