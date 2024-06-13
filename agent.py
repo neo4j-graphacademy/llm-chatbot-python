@@ -1,6 +1,5 @@
 from llm import llm
 from graph import graph
-from utils import get_session_id
 
 # Create a movie chat chain
 

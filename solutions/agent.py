@@ -51,7 +51,6 @@ tools = [
 # # from solutions.tools.fewshot import cypher_qa
 # from solutions.tools.finetuned import cypher_qa
 
-# tag::tools[]
 # tools = [
 #     Tool.from_function(
 #         name="General Chat",
@@ -72,7 +71,6 @@ tools = [
 #         return_direct=True
 #     )
 # ]
-# end::tools[]
 
 # tag::get_memory[]
 def get_memory(session_id):
@@ -80,7 +78,9 @@ def get_memory(session_id):
 # end::get_memory[]
 
 # tag::agent[]
+# tag::agent_prompt[]
 agent_prompt = hub.pull("hwchase17/react-chat")
+# end::agent_prompt[]
 agent = create_react_agent(llm, tools, agent_prompt)
 agent_executor = AgentExecutor(
     agent=agent,
