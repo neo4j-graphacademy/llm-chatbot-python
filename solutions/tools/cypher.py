@@ -1,61 +1,69 @@
-import streamlit as st
-
-# tag::import[]
 from langchain.chains import GraphCypherQAChain
+from langchain.prompts.prompt import PromptTemplate
 
-from llm import llm
-from graph import graph
-# end::import[]
+from solutions.llm import llm
+from solutions.graph import graph
 
+CYPHER_GENERATION_TEMPLATE = """
+You are an expert Neo4j Developer translating user questions into Cypher to answer questions about movies and provide recommendations.
+Convert the user's question based on the schema.
 
-# tag::cypher-qa[]
-cypher_qa = GraphCypherQAChain.from_llm(
-    llm,          # <1>
-    graph=graph,  # <2>
+Use only the provided relationship types and properties in the schema.
+Do not use any other relationship types or properties that are not provided.
+
+Do not return entire nodes or embedding properties.
+
+Fine Tuning:
+
+For movie titles that begin with "The", move "the" to the end. For example "The 39 Steps" becomes "39 Steps, The" or "the matrix" becomes "Matrix, The".
+
+Example Cypher Statements:
+
+1. To find who acted in a movie:
+```
+MATCH (p:Person)-[r:ACTED_IN]->(m:Movie {{title: "Movie Title"}})
+RETURN p.name, r.role
+```
+
+2. To find who directed a movie:
+```
+MATCH (p:Person)-[r:DIRECTED]->(m:Movie {{title: "Movie Title"}})
+RETURN p.name
+```
+
+3. How to find how many degrees of separation there are between two people:
+```
+MATCH path = shortestPath(
+  (p1:Person {{name: "Actor 1"}})-[:ACTED_IN|DIRECTED*]-(p2:Person {{name: "Actor 2"}})
 )
-# end::cypher-qa[]
+WITH path, p1, p2, relationships(path) AS rels
+RETURN
+  p1 {{ .name, .born, link:'https://www.themoviedb.org/person/'+ p1.tmdbId }} AS start,
+  p2 {{ .name, .born, link:'https://www.themoviedb.org/person/'+ p2.tmdbId }} AS end,
+  reduce(output = '', i in range(0, length(path)-1) |
+    output + CASE
+      WHEN i = 0 THEN
+       startNode(rels[i]).name + CASE WHEN type(rels[i]) = 'ACTED_IN' THEN ' played '+ rels[i].role +' in 'ELSE ' directed ' END + endNode(rels[i]).title
+       ELSE
+         ' with '+ startNode(rels[i]).name + ', who '+ CASE WHEN type(rels[i]) = 'ACTED_IN' THEN 'played '+ rels[i].role +' in '
+    ELSE 'directed '
+      END + endNode(rels[i]).title
+      END
+  ) AS pathBetweenPeople
+```
 
-# tag::generate-response[]
-def generate_response(prompt):
-    """
-    Use the Neo4j recommendations dataset to provide
-    context to the LLM when answering a question
-    """
+Schema:
+{schema}
 
-    # Handle the response
-    response = cypher_qa.run(prompt)
-
-    return response
-# end::generate-response[]
-
-
+Question:
+{question}
 """
-The `kg_qa` can now be registered as a tool within the agent.
 
-# tag::importcypherqa[]
-from tools.cypher import cypher_qa
-# end::importcypherqa[]
+cypher_prompt = PromptTemplate.from_template(CYPHER_GENERATION_TEMPLATE)
 
-# tag::tool[]
-tools = [
-    Tool.from_function(
-        name="General Chat",
-        description="For general chat not covered by other tools",
-        func=llm.invoke,
-        return_direct=True
-        ),
-    Tool.from_function(
-        name="Vector Search Index",
-        description="Provides information about movie plots using Vector Search",
-        func = kg_qa,
-        return_direct=True
-    ),
-    Tool.from_function(
-        name="Graph Cypher QA Chain",  # <1>
-        description="Provides information about Movies including their Actors, Directors and User reviews", # <2>
-        func = cypher_qa, # <3>
-        return_direct=True
-    ),
-]
-# end::tool[]
-"""
+cypher_qa = GraphCypherQAChain.from_llm(
+    llm,
+    graph=graph,
+    verbose=True,
+    cypher_prompt=cypher_prompt
+)

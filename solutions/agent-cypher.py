@@ -11,7 +11,9 @@ from langchain import hub
 from utils import get_session_id
 
 from tools.vector import get_movie_plot
+# tag::import_cypher_qa[]
 from tools.cypher import cypher_qa
+# end::import_cypher_qa[]
 
 chat_prompt = ChatPromptTemplate.from_messages(
     [
@@ -22,6 +24,7 @@ chat_prompt = ChatPromptTemplate.from_messages(
 
 movie_chat = chat_prompt | llm | StrOutputParser()
 
+# tag::tools[]
 tools = [
     Tool.from_function(
         name="General Chat",
@@ -39,6 +42,7 @@ tools = [
         func = cypher_qa
     )
 ]
+# end::tools[]
 
 def get_memory(session_id):
     return Neo4jChatMessageHistory(session_id=session_id, graph=graph)

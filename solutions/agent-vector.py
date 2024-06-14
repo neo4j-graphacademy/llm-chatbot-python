@@ -10,8 +10,9 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain import hub
 from utils import get_session_id
 
+# tag::import_get_movie_plot[]
 from tools.vector import get_movie_plot
-from tools.cypher import cypher_qa
+# end::import_get_movie_plot[]
 
 chat_prompt = ChatPromptTemplate.from_messages(
     [
@@ -22,6 +23,7 @@ chat_prompt = ChatPromptTemplate.from_messages(
 
 movie_chat = chat_prompt | llm | StrOutputParser()
 
+# tag::tools[]
 tools = [
     Tool.from_function(
         name="General Chat",
@@ -32,13 +34,9 @@ tools = [
         name="Movie Plot Search",  
         description="For when you need to find information about movies based on a plot",
         func=get_movie_plot, 
-    ),
-    Tool.from_function(
-        name="Movie information",
-        description="Provide information about movies questions using Cypher",
-        func = cypher_qa
     )
 ]
+# end::tools[]
 
 def get_memory(session_id):
     return Neo4jChatMessageHistory(session_id=session_id, graph=graph)
