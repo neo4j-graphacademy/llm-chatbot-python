@@ -5,13 +5,15 @@ from graph import graph
 # tag::import_vector[]
 from langchain_community.vectorstores.neo4j_vector import Neo4jVector
 # end::import_vector[]
-# tag::import_chatprompt[]
-from langchain_core.prompts import ChatPromptTemplate
-# end::import_chatprompt[]
 # tag::import_chain[]
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 # end::import_chain[]
+
+# tag::import_chat_prompt[]
+from langchain_core.prompts import ChatPromptTemplate
+# end::import_chat_prompt[]
+
 
 # tag::vector[]
 neo4jvector = Neo4jVector.from_existing_index(
