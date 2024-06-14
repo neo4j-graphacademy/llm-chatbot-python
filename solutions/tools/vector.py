@@ -5,9 +5,9 @@ from graph import graph
 # tag::import_vector[]
 from langchain_community.vectorstores.neo4j_vector import Neo4jVector
 # end::import_vector[]
-# tag::import_prompt[]
+# tag::import_chatprompt[]
 from langchain_core.prompts import ChatPromptTemplate
-# end::import_prompt[]
+# end::import_chatprompt[]
 # tag::import_chain[]
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
