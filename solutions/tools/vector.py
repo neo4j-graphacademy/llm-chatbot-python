@@ -5,7 +5,7 @@ from graph import graph
 # tag::import_vector[]
 from langchain_community.vectorstores.neo4j_vector import Neo4jVector
 # end::import_vector[]
-# tag:: import_prompt[]
+# tag::import_prompt[]
 from langchain_core.prompts import ChatPromptTemplate
 # end::import_prompt[]
 # tag::import_chain[]
