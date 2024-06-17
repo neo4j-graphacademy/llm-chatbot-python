@@ -1,5 +1,7 @@
-# tag::llm[]
 import streamlit as st
+
+# tag::llm[]
+# Create the LLM
 from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
@@ -9,6 +11,7 @@ llm = ChatOpenAI(
 # end::llm[]
 
 # tag::embedding[]
+# Create the Embedding model
 from langchain_openai import OpenAIEmbeddings
 
 embeddings = OpenAIEmbeddings(
