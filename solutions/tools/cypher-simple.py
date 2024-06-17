@@ -3,7 +3,7 @@ from llm import llm
 from graph import graph
 
 # tag::import[]
-from langchain_community.chains.graph_qa.cypher import GraphCypherQAChain¶
+from langchain_community.chains.graph_qa.cypher import GraphCypherQAChain
 # end::import[]
 
 # tag::cypher-qa[]
