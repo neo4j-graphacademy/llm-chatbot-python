@@ -1,9 +1,17 @@
 from llm import llm
 from graph import graph
-
-# Create a movie chat chain
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
+from langchain.tools import Tool
+from langchain_community.chat_message_histories import Neo4jChatMessageHistory
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain import hub
+from utils import get_session_id
+
+from tools.vector import get_movie_plot
+from tools.cypher import cypher_qa
 
 chat_prompt = ChatPromptTemplate.from_messages(
     [
@@ -14,28 +22,26 @@ chat_prompt = ChatPromptTemplate.from_messages(
 
 movie_chat = chat_prompt | llm | StrOutputParser()
 
-# Create a set of tools
-from langchain.tools import Tool
-
 tools = [
     Tool.from_function(
         name="General Chat",
         description="For general movie chat not covered by other tools",
         func=movie_chat.invoke,
+    ), 
+    Tool.from_function(
+        name="Movie Plot Search",  
+        description="For when you need to find information about movies based on a plot",
+        func=get_movie_plot, 
+    ),
+    Tool.from_function(
+        name="Movie information",
+        description="Provide information about movies questions using Cypher",
+        func = cypher_qa
     )
 ]
 
-# Create chat history callback
-from langchain_community.chat_message_histories import Neo4jChatMessageHistory
-
 def get_memory(session_id):
     return Neo4jChatMessageHistory(session_id=session_id, graph=graph)
-
-# Create the agent
-from langchain.agents import AgentExecutor, create_react_agent
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain import hub
-from langchain_core.prompts import PromptTemplate
 
 agent_prompt = PromptTemplate.from_template("""
 You are a movie expert providing information about movies.
@@ -90,9 +96,6 @@ chat_agent = RunnableWithMessageHistory(
     history_messages_key="chat_history",
 )
 
-# Create a handler to call the agent
-from utils import get_session_id
-
 def generate_response(user_input):
     """
     Create a handler that calls the Conversational agent
@@ -104,4 +107,3 @@ def generate_response(user_input):
         {"configurable": {"session_id": get_session_id()}},)
 
     return response['output']
-
