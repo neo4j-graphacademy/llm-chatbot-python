@@ -1,5 +1,4 @@
-import streamlit as st
-from llm import llm, embeddings
+from llm import init_llm, init_embeddings
 from graph import graph
 
 from langchain_community.vectorstores.neo4j_vector import Neo4jVector
@@ -8,6 +7,8 @@ from langchain.chains import create_retrieval_chain
 
 from langchain_core.prompts import ChatPromptTemplate
 
+llm = init_llm()
+embeddings = init_embeddings()
 
 neo4jvector = Neo4jVector.from_existing_index(
     embeddings,                              # (1)
