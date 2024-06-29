@@ -1,11 +1,9 @@
 import streamlit as st
-from llm import init_llm
+from llm import llm
 from graph import graph
 
 from langchain_community.chains.graph_qa.cypher import GraphCypherQAChain
 from langchain.prompts.prompt import PromptTemplate
-
-llm = init_llm()
 
 CYPHER_GENERATION_TEMPLATE = """
 You are an expert Neo4j Developer translating user questions into Cypher to answer questions about movies and provide recommendations.

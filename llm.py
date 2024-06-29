@@ -11,51 +11,24 @@ from settings import (
     SEED,
 )
 
-@cache
-def init_llm(
-    model_id=MODEL_ID,
+azure_credential = DefaultAzureCredential()
+token_provider = get_bearer_token_provider(
+    azure_credential, "https://cognitiveservices.azure.com/.default"
+)
+
+llm = AzureChatOpenAI(
     api_version=OPENAI_API_VERSION,
+    azure_ad_token_provider=token_provider,
+    azure_endpoint=OPENAI_ENDPOINT,
+    azure_deployment=MODEL_ID,
     temperature=TEMPERATURE,
-    seed=SEED,
-):
-    azure_credential = DefaultAzureCredential()
-    token_provider = get_bearer_token_provider(
-        azure_credential, "https://cognitiveservices.azure.com/.default"
-    )
+    model_kwargs={"seed": SEED},
+    streaming=True,
+)
 
-    return AzureChatOpenAI(
-        api_version=api_version,
-        azure_ad_token_provider=token_provider,
-        azure_endpoint=OPENAI_ENDPOINT,
-        azure_deployment=model_id,
-        temperature=temperature,
-        model_kwargs={"seed": seed},
-        streaming=True,
-    )
-
-@cache
-def init_embeddings(
-    model_id=MODEL_ID,
-    api_version=OPENAI_API_VERSION
-):
-    azure_credential = DefaultAzureCredential()
-    token_provider = get_bearer_token_provider(
-        azure_credential, "https://cognitiveservices.azure.com/.default"
-    )
-
-    return AzureOpenAIEmbeddings(
-        api_version=api_version,
-        azure_endpoint=OPENAI_ENDPOINT,
-        azure_ad_token_provider=token_provider,
-        azure_deployment=model_id
-    )
-
-if __name__ == "__main__":
-    from langchain_core.messages.human import HumanMessage
-    embeddings = init_embeddings()
-    print("embeddings done")
-
-
-    llm = init_llm()
-    result = llm.invoke([HumanMessage(content="hello world")])
-    print(result)
+embeddings =  AzureOpenAIEmbeddings(
+    openai_api_version=OPENAI_API_VERSION,
+    azure_deployment=MODEL_ID,
+    azure_ad_token_provider=token_provider,
+    azure_endpoint=OPENAI_ENDPOINT
+)

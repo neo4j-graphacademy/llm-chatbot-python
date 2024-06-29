@@ -1,4 +1,4 @@
-from llm import init_llm
+from llm import llm
 from graph import graph
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import PromptTemplate
@@ -12,8 +12,6 @@ from utils import get_session_id
 
 from tools.vector import get_movie_plot
 from tools.cypher import cypher_qa
-
-llm = init_llm()
 
 chat_prompt = ChatPromptTemplate.from_messages(
     [
