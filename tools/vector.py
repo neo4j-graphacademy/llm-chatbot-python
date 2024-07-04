@@ -8,6 +8,7 @@ from langchain.chains import create_retrieval_chain
 
 from langchain_core.prompts import ChatPromptTemplate
 
+
 neo4jvector = Neo4jVector.from_existing_index(
     embeddings,                              # (1)
     graph=graph,                             # (2)
