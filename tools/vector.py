@@ -1,4 +1,3 @@
-import streamlit as st
 from llm import llm, embeddings
 from graph import graph
 from langchain_community.vectorstores.neo4j_vector import Neo4jVector
@@ -88,16 +87,16 @@ def create_my_retrieval_chain(prompt, retriever):
 
 
 # Create a function to call the chain
-def get_movie_plot(input):
+def get_movie_plot(usr_input):
     """
     Calls the retrieval chain to get the movie plot.
 
     Args:
-        input (str): The question about the movie plot
+        usr_input (str): The question about the movie plot
     """
     neo4jvector = create_neo4j_vector()
     my_retriever = neo4jvector.as_retriever()
     my_prompt = create_prompt()
     my_retrieval_chain = create_my_retrieval_chain(prompt=my_prompt, retriever=my_retriever)
 
-    return my_retrieval_chain.invoke({"input": input})
+    return my_retrieval_chain.invoke({"input": usr_input})

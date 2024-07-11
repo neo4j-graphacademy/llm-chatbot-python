@@ -19,3 +19,4 @@ def connect_to_neo4j() -> Neo4jGraph:
 # Connect to Neo4j and provide the graph as
 # from graph import graph
 graph = connect_to_neo4j()
+
