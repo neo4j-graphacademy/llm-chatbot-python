@@ -13,8 +13,15 @@ def write_message(role, content, save=True):
         st.session_state.messages.append({"role": role, "content": content})
 
     # Write to UI
-    with st.chat_message(role):
-        st.markdown(content)
+    if role == 'assistant':
+        with st.chat_message(role, avatar="figures/assistant.png"):
+            st.markdown(content)
+    elif role == 'user':
+        with st.chat_message(role, avatar="figures/user.png"):
+            st.markdown(content)
+    else:
+        with st.chat_message(role):
+            st.markdown(content)
 
 
 # end::write_message[]

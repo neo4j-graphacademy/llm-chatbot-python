@@ -9,14 +9,25 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain import hub
 from utils import get_session_id
 from langchain_core.prompts import PromptTemplate
-from tools.vector import get_movie_plot
+from tools.vector import get_chemical_information
 from tools.cypher import cypher_qa
+from tools.wikipedia import wikipedia
 
 
-def create_movie_chat_chain() -> ChatPromptTemplate:
+def create_chemical_chat_chain() -> ChatPromptTemplate:
     chat_prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", "You are a movie expert providing information about movies."),
+            ("system", "You are an environmental toxicology expert providing information about chemicals that have "
+                       "been investigated in European surface waters like rivers and lakes. "
+                       "You know about the measured concentrations, the geographical location of the sampling sites, "
+                       "and the expected toxicity of the chemicals in algae."
+                       "You are also able to evaluate the toxicity of the measured concentration by using the toxic "
+                       "unit TU as a reference. "
+                       "High values mean higher toxicity. Values above 0.01 may already have an impact on the species,"
+                       "and values above 1 are definitely toxic."
+                       "You know about the summarized impact in terms of the sum of all TUs (sumTU) of all chemicals "
+                       "measured at a sampling site."
+                       "You also know about the time point of the sampling as a year and quarter combination."),
             ("human", "{input}")
         ]
     )
@@ -36,18 +47,23 @@ def create_toolset(general_chat: ChatPromptTemplate) -> [Tool]:
     return [
         Tool.from_function(
             name="General Chat",
-            description="For general movie chat not covered by other tools",
+            description="For general chat not covered by other tools",
             func=general_chat.invoke,
         ),
+        # Tool.from_function(
+        #     name="Chemical Search",
+        #     description="For when you need to find information about a chemical",
+        #     func=get_chemical_information,
+        # ),
         Tool.from_function(
-            name="Movie Plot Search",
-            description="For when you need to find information about movies based on a plot",
-            func=get_movie_plot,
+            name="Graph DB Search",
+            description="Provide details about chemicals and measured and detected chemical concentrations",
+            func=cypher_qa,
         ),
         Tool.from_function(
-            name="Movie Information",
-            description="Provide information about movies questions using Cypher",
-            func=cypher_qa,
+            name="Wikipedia Search",
+            description="For when you need to find general information about a chemical or a sampling site",
+            func=wikipedia.invoke,
         )
         # Add more tools as needed...
     ]
@@ -81,9 +97,10 @@ def get_agent_prompt(standard: bool = True) -> PromptTemplate:
         return hub.pull("hwchase17/react-chat")
     else:
         return PromptTemplate.from_template("""
-        You are a movie expert providing information about movies.
+        You are an expert on environmental monitoring of chemicals in European surface waters.
         Be as helpful as possible and return as much information as possible.
-        Do not answer any questions that do not relate to movies, actors or directors.
+        Do not answer any questions that do not relate to chemicals, sampling sites, measured concentrations, 
+        toxicities, or species.
         
         Do not answer any questions using your pre-trained knowledge, only use the information provided in the context.
         
@@ -103,11 +120,17 @@ def get_agent_prompt(standard: bool = True) -> PromptTemplate:
         Observation: the result of the action
         ```
         
+        Only use the wikipedia tool for general information.
+        For details about measured or detected chemical concentrations in European surface waters like rivers or lakes, 
+        use the Chemical measurement information tool.
+        Combine the results of different tools to provide as much information to the user as possible.
+        For example, use the wikipedia tool before the Chemical measurement information, and include the summary of
+        the first paragraph of the wikipedia result as an introduction to the response of the Chemical measurement tool. 
         When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the format:
         
         ```
         Thought: Do I need to use a tool? No
-        Final Answer: [your response here]
+        Final Answer: [your response here ([tool_names])]
         ```
         
         Begin!
@@ -137,6 +160,7 @@ def create_agent(current_llm, toolset) -> RunnableWithMessageHistory:
         agent=agent,
         tools=toolset,
         verbose=True,
+        handle_parsing_errors=True
     )
     return RunnableWithMessageHistory(
         agent_executor,

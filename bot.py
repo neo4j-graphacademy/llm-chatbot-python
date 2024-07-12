@@ -5,12 +5,14 @@ from graph import graph
 import agent
 
 # Page Config
-st.set_page_config("Ebert", page_icon="🎇")
+st.set_page_config(page_title="EcoToxFred", page_icon="figures/assistant.png")
 
 # Set up Session State
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Hi, I'm the GraphAcademy Chatbot!  How can I help you?"},
+        {"role": "assistant",
+         "content": "Hi, I'm EcoToxFred!  How can I help you?",
+         "avatar": "figures/simple_avatar.png"},
     ]
 
 
@@ -24,16 +26,13 @@ def handle_submit(chat_agent, submitted_message):
     """
 
     # Handle the response
-    with st.spinner('Thinking...'):
-        # # TODO: Replace this with a call to your LLM
-        # from time import sleep
-        # sleep(1)
+    with st.spinner('Generating response ...'):
         response = agent.generate_response(chat_agent, submitted_message)
         write_message('assistant', response)
 
 
-movie_chat = agent.create_movie_chat_chain()
-tools = agent.create_toolset(general_chat=movie_chat)
+my_chat = agent.create_chemical_chat_chain()
+tools = agent.create_toolset(general_chat=my_chat)
 chat_agent = agent.create_agent(current_llm=llm, toolset=tools)
 
 # Display messages in Session State
@@ -41,7 +40,7 @@ for message in st.session_state.messages:
     write_message(message['role'], message['content'], save=False)
 
 # Handle any user input
-if question := st.chat_input("What is up now?"):
+if question := st.chat_input("What do you want to know?"):
     # Display user message in chat message container
     write_message('user', question)
 

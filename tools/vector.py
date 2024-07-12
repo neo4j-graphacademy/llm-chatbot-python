@@ -87,7 +87,7 @@ def create_my_retrieval_chain(prompt, retriever):
 
 
 # Create a function to call the chain
-def get_movie_plot(usr_input):
+def get_chemical_information(usr_input):
     """
     Calls the retrieval chain to get the movie plot.
 

@@ -13,3 +13,17 @@ DETACH DELETE n
 MATCH (s:Substance {preferredName: 'Diuron'})-[r:IS_DRIVER]->(l:Site)
   WHERE r.driver_importance > 0.8
 RETURN s, r, l
+
+// find all substances measured above a threshold in a certain river
+MATCH (c:Substance)-[r:MEASURED_AT]->(s:Site {water_body: 'seine'})
+  WHERE r.mean_concentration > 0
+RETURN c.DTXSID AS DTXSID, c.preferredName AS Name
+
+MATCH (c:Substance)-[r:MEASURED_AT]->(s:Site {country: 'France'})
+RETURN DISTINCT c.DTXSID AS DTXSID, c.preferredName AS Name
+
+// find most frequent drivers
+MATCH (s:Substance)-[r:IS_DRIVER]->(l:Site)
+  WHERE r.driver_importance > 0.8
+RETURN DISTINCT s.name, s.DTXSID, r.driver_importance
+  ORDER BY r.driver_importance

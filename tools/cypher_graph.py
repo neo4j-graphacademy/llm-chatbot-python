@@ -2,6 +2,8 @@ from llm import llm
 from graph import graph
 from langchain_community.chains.graph_qa.cypher import GraphCypherQAChain
 from langchain.prompts.prompt import PromptTemplate
+import networkx as nx
+import matplotlib.pyplot as plt
 
 
 def create_cypher_prompt_template():
@@ -19,7 +21,7 @@ def create_cypher_prompt_template():
         Use only the provided relationship types and properties in the schema.
         Do not use any other relationship types or properties that are not provided.
         
-        Do not return entire nodes or embedding properties.
+        Do return entire nodes and relations in JSON format.
         
         Schema:
         {schema}
@@ -54,46 +56,41 @@ def create_cypher_prompt_template():
         ```
         MATCH (s:Substance) 
         WHERE s.name = 'Diuron'
-        return s.DTXSID as DTXSID, s.name as Name
+        return s
         ```
         1. To find sites where a certain substance has been measured
         ```
         MATCH (s:Substance)-[r:MEASURED_AT]->(l:Site)
         WHERE s.name='Diuron'
-        RETURN s.name as ChemicalName, s.DTXSID as DTXSID, r.concentration_value as Concentration, 
-        r.concentration_unit as ConcentrationUnit, r.year as Year, r.quarter as Quarter, l.name as SiteName, 
-        l.country as Country, l.river_basin as RiverBasin, l.water_body as WaterBody
+        RETURN s, r, l
         ```
         
         2. To find sites where a certain substance has been measured with a mean concentration above a threshold:
         ```
         MATCH (s:Substance)-[r:MEASURED_AT]->(l:Site)
         WHERE s.name='Diuron' AND r.mean_concentration > 0.001
-        RETURN s.name as ChemicalName, s.DTXSID as DTXSID, r.concentration_value as Concentration, 
-        r.concentration_unit as ConcentrationUnit, r.year as Year, r.quarter as Quarter, l.name as SiteName, 
-        l.country as Country, l.river_basin as RiverBasin, l.water_body as WaterBody
+        RETURN s, r, l
         ```
         
         3. To find all chemicals measured in a certain river:
         ```
         MATCH (c:Substance)-[r:MEASURED_AT]->(s:Site)
         WHERE s.water_body = 'seine' AND r.mean_concentration > 0.001
-        RETURN c.DTXSID AS DTXSID, c.name AS Name
+        RETURN c, r, s
         ```
         
         4. To find all substances measured in France
         ```
         MATCH (c:Substance)-[r:MEASURED_AT]->(s:Site)
         WHERE s.country = 'France'
-        RETURN DISTINCT c.DTXSID AS DTXSID, c.name AS Name
+        RETURN DISTINCT c, r, s
         ```
         
         5. To find the most frequent driver chemicals 
         ```
         MATCH (s:Substance)-[r:IS_DRIVER]->(l:Site)
         WHERE r.driver_importance > 0.8
-        RETURN DISTINCT s.name, s.DTXSID, r.driver_importance
-        ORDER BY r.driver_importance
+        RETURN DISTINCT s, r, l
         ```
         Question:
         {question}
@@ -113,8 +110,32 @@ def create_cypher_qa_chain(prompt_template: PromptTemplate) -> GraphCypherQAChai
         graph=graph,
         verbose=True,
         cypher_prompt=prompt_template,
-        return_embedding=False,  # Don't return embedding properties for better performance
+        return_intermediate_steps=True,
     )
 
 
+def visualize_graph(graph_to_plot: nx.Graph):
+    pos = nx.spring_layout(graph_to_plot)
+    plt.figure(figsize=(12, 8))
+    nx.draw(graph_to_plot, pos, with_labels=True, node_color='skyblue',
+            edge_color='gray')  # , node_size=2000, font_size=15)
+    plt.savefig('/home/hertelj/git-hertelj/llm-chatbot-python/figures/result_graph.png')
+    # plt.show()
+
+
 cypher_qa = create_cypher_qa_chain(prompt_template=create_cypher_prompt_template())
+result = cypher_qa.invoke({"query": "Return the Cypher query for the question to provide the DTXSID of Diuron"})
+cypher_query = result['intermediate_steps'][0]['query']
+cypher_query = "MATCH (s:Substance)-[r:MEASURED_AT]->(l:Site) WHERE s.name = 'Diuron' AND r.mean_concentration > 0.005 RETURN s,r,l"
+graph_db_result = graph.query(query=cypher_query)
+# transform to nodes, edges
+result_graph = nx.Graph()
+for record in graph_db_result:
+    if 's' in record.keys():
+        result_graph.add_node(record['s']['DTXSID'], label='Substance', **record['s'])
+    elif 'r' in record.keys():
+        pass
+    elif 'l' in record.keys():
+        result_graph.add_node(record['l']['name'], label='Site', **record['l'])
+
+visualize_graph(graph_to_plot=result_graph)
