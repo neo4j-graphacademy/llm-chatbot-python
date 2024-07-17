@@ -105,13 +105,26 @@ def create_cypher_qa_chain(prompt_template: PromptTemplate) -> GraphCypherQAChai
     Args:
         prompt_template (PromptTemplate): The prompt template for Cypher queries
     """
-    return GraphCypherQAChain.from_llm(
+    chain = GraphCypherQAChain.from_llm(
         llm,
         graph=graph,
         verbose=True,
         cypher_prompt=prompt_template,
-        return_intermediate_steps=True,
+        return_intermediate_steps=False,
     )
+    chain.return_direct = True
+    return chain
+
+
+def invoke_cypher_graph_tool(arg, **kwargs):
+    chain = create_cypher_qa_chain(prompt_template=create_cypher_prompt_template())
+    query_result = chain.invoke(arg, **kwargs)
+
+    # find last cypher query
+    # call db with cypher query
+    # build sub-graph
+    # visualize with streamlit
+    return str(query_result)
 
 
 def visualize_graph(graph_to_plot: nx.Graph):
@@ -123,19 +136,38 @@ def visualize_graph(graph_to_plot: nx.Graph):
     # plt.show()
 
 
-cypher_qa = create_cypher_qa_chain(prompt_template=create_cypher_prompt_template())
-result = cypher_qa.invoke({"query": "Return the Cypher query for the question to provide the DTXSID of Diuron"})
-cypher_query = result['intermediate_steps'][0]['query']
-cypher_query = "MATCH (s:Substance)-[r:MEASURED_AT]->(l:Site) WHERE s.name = 'Diuron' AND r.mean_concentration > 0.005 RETURN s,r,l"
-graph_db_result = graph.query(query=cypher_query)
-# transform to nodes, edges
-result_graph = nx.Graph()
-for record in graph_db_result:
-    if 's' in record.keys():
-        result_graph.add_node(record['s']['DTXSID'], label='Substance', **record['s'])
-    elif 'r' in record.keys():
-        pass
-    elif 'l' in record.keys():
-        result_graph.add_node(record['l']['name'], label='Site', **record['l'])
+def get_query_from_llm():
+    pass
 
-visualize_graph(graph_to_plot=result_graph)
+
+def verify_query_correctness():
+    pass
+
+
+def build_graph_from_query_result():
+    pass
+
+
+def create_visualization_from_graph():
+    pass
+
+
+def create_cytoscape_from_graph():
+    pass
+
+# cypher_qa = create_cypher_qa_chain(prompt_template=create_cypher_prompt_template())
+# result = cypher_qa.invoke({"query": "Return the Cypher query for the question to provide the DTXSID of Diuron"})
+# cypher_query = result['intermediate_steps'][0]['query']
+# cypher_query = "MATCH (s:Substance)-[r:MEASURED_AT]->(l:Site) WHERE s.name = 'Diuron' AND r.mean_concentration > 0.005 RETURN s,r,l"
+# graph_db_result = graph.query(query=cypher_query)
+# # transform to nodes, edges
+# result_graph = nx.Graph()
+# for record in graph_db_result:
+#     if 's' in record.keys():
+#         result_graph.add_node(record['s']['DTXSID'], label='Substance', **record['s'])
+#     elif 'r' in record.keys():
+#         pass
+#     elif 'l' in record.keys():
+#         result_graph.add_node(record['l']['name'], label='Site', **record['l'])
+#
+# visualize_graph(graph_to_plot=result_graph)

@@ -12,6 +12,7 @@ from langchain_core.prompts import PromptTemplate
 from tools.vector import get_chemical_information
 from tools.cypher import cypher_qa
 from tools.wikipedia import wikipedia
+from tools.cypher_graph import invoke_cypher_graph_tool
 
 
 def create_chemical_chat_chain() -> ChatPromptTemplate:
@@ -50,11 +51,12 @@ def create_toolset(general_chat: ChatPromptTemplate) -> [Tool]:
             description="For general chat not covered by other tools",
             func=general_chat.invoke,
         ),
-        # Tool.from_function(
-        #     name="Chemical Search",
-        #     description="For when you need to find information about a chemical",
-        #     func=get_chemical_information,
-        # ),
+        Tool.from_function(
+            name="Visualize Graph",
+            description="Provide a graph or network visualisation of chemicals, measured and detected chemical "
+                        "concentrations in European rivers and lakes.",
+            func=invoke_cypher_graph_tool,
+        ),
         Tool.from_function(
             name="Graph DB Search",
             description="Provide details about chemicals and measured and detected chemical concentrations",
