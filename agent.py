@@ -10,9 +10,10 @@ from langchain import hub
 from utils import get_session_id
 from langchain_core.prompts import PromptTemplate
 from tools.vector import get_chemical_information
-from tools.cypher import cypher_qa
+from tools.cypher import invoke_cypher_tool
 from tools.wikipedia import wikipedia
 from tools.cypher_graph import invoke_cypher_graph_tool
+from tools.cypher_plot import invoke_cypher_plot_tool
 
 
 def create_chemical_chat_chain() -> ChatPromptTemplate:
@@ -51,16 +52,25 @@ def create_toolset(general_chat: ChatPromptTemplate) -> [Tool]:
             description="For general chat not covered by other tools",
             func=general_chat.invoke,
         ),
+        # Tool.from_function(
+        #     name="Visualize Graph",
+        #     description="Provide a graph or network visualisation of chemicals, measured and detected chemical "
+        #                 "concentrations in European rivers and lakes.",
+        #     func=invoke_cypher_graph_tool,
+        # ),
         Tool.from_function(
-            name="Visualize Graph",
-            description="Provide a graph or network visualisation of chemicals, measured and detected chemical "
-                        "concentrations in European rivers and lakes.",
-            func=invoke_cypher_graph_tool,
+            name="Plot Cypher Result",
+            description="Provide a scientific plot of measured and detected chemical concentrations or chemical "
+                        "driver importance values in European rivers and lakes.",
+            func=invoke_cypher_plot_tool,
         ),
         Tool.from_function(
             name="Graph DB Search",
-            description="Provide details about chemicals and measured and detected chemical concentrations",
-            func=cypher_qa,
+            description="Provide details about chemicals and measured and detected chemical concentrations or "
+                        "information about chemical driver importance and the time points in the form of year and/or "
+                        "quarter information of the measurement time points. "
+                        "Information from European surface water bodies like rivers and lakes can be requested.",
+            func=invoke_cypher_tool,
         ),
         Tool.from_function(
             name="Wikipedia Search",
@@ -127,7 +137,8 @@ def get_agent_prompt(standard: bool = True) -> PromptTemplate:
         use the Chemical measurement information tool.
         Combine the results of different tools to provide as much information to the user as possible.
         For example, use the wikipedia tool before the Chemical measurement information, and include the summary of
-        the first paragraph of the wikipedia result as an introduction to the response of the Chemical measurement tool. 
+        the first paragraph of the wikipedia result as an introduction to the response of the Chemical measurement tool.
+        When you have a response including an image_url, keep the image_url in the response.  
         When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the format:
         
         ```
@@ -178,4 +189,4 @@ def generate_response(chat_agent, user_input):
         {'input': user_input},
         {"configurable": {"session_id": get_session_id()}},
     )
-    return response['output']
+    return response

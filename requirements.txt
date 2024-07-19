@@ -9,3 +9,6 @@ langchain-community==0.2.4
 networkx~=3.3
 matplotlib~=3.9.1
 wikipedia~=1.4.0
+requests~=2.32.3
+pillow~=10.4.0
+pandas~=2.2.2

@@ -4,6 +4,10 @@ from langchain_community.chains.graph_qa.cypher import GraphCypherQAChain
 from langchain.prompts.prompt import PromptTemplate
 import networkx as nx
 import matplotlib.pyplot as plt
+from langchain_community.chains.graph_qa.cypher_utils import (
+    CypherQueryCorrector,
+    Schema,
+)
 
 
 def create_cypher_prompt_template():
@@ -110,7 +114,7 @@ def create_cypher_qa_chain(prompt_template: PromptTemplate) -> GraphCypherQAChai
         graph=graph,
         verbose=True,
         cypher_prompt=prompt_template,
-        return_intermediate_steps=False,
+        return_intermediate_steps=True,
     )
     chain.return_direct = True
     return chain
@@ -119,9 +123,10 @@ def create_cypher_qa_chain(prompt_template: PromptTemplate) -> GraphCypherQAChai
 def invoke_cypher_graph_tool(arg, **kwargs):
     chain = create_cypher_qa_chain(prompt_template=create_cypher_prompt_template())
     query_result = chain.invoke(arg, **kwargs)
-
     # find last cypher query
+    # last_db_query = get_query_from_llm(original_query_result=query_result, graph=graph)
     # call db with cypher query
+    # build_graph_from_query_result(graph_query=last_db_query, graph=graph)
     # build sub-graph
     # visualize with streamlit
     return str(query_result)
@@ -136,16 +141,72 @@ def visualize_graph(graph_to_plot: nx.Graph):
     # plt.show()
 
 
-def get_query_from_llm():
-    pass
+def get_query_from_llm(original_query_result, **kwargs) -> str:
+    l = len(original_query_result['intermediate_steps'])  # how many intermediate steps?
+    query = original_query_result['intermediate_steps'][l - 1]['query']  # get last (cypher) query
+    # check whether it really is a cypher query
+    corrector_schema = [
+        Schema(el["start"], el["type"], el["end"])
+        for el in kwargs["graph"].structured_schema.get("relationships")
+    ]
+    cypher_query_corrector = CypherQueryCorrector(corrector_schema)
+    return cypher_query_corrector(query)
 
 
 def verify_query_correctness():
     pass
 
 
-def build_graph_from_query_result():
-    pass
+def build_graph_from_query_result(graph_query, **kwargs):
+    query_result = graph.query(graph_query)
+
+    return query_result
+
+
+def graph_from_cypher(data):
+    """Constructs a networkx graph from the results of a neo4j cypher query.
+    Example of use:
+    >>> result = session.run(query)
+    >>> G = graph_from_cypher(result.data())
+
+    Nodes have fields 'labels' (frozenset) and 'properties' (dicts). Node IDs correspond to the neo4j graph.
+    Edges have fields 'type_' (string) denoting the type of relation, and 'properties' (dict)."""
+
+    G = nx.MultiDiGraph()
+
+    def add_node(node):
+        # Adds node id it hasn't already been added
+        u = node.id
+        if G.has_node(u):
+            return
+        G.add_node(u, labels=node._labels, properties=dict(node))
+
+    def add_edge(relation):
+        # Adds edge if it hasn't already been added.
+        # Make sure the nodes at both ends are created
+        for node in (relation.start_node, relation.end_node):
+            add_node(node)
+        # Check if edge already exists
+        u = relation.start_node.id
+        v = relation.end_node.id
+        eid = relation.id
+        if G.has_edge(u, v, key=eid):
+            return
+        # If not, create it
+        G.add_edge(u, v, key=eid, type_=relation.type, properties=dict(relation))
+
+    for d in data:
+        for entry in d.values():
+            # Parse node
+            if isinstance(entry, Node):
+                add_node(entry)
+
+            # Parse link
+            elif isinstance(entry, Relationship):
+                add_edge(entry)
+            else:
+                raise TypeError("Unrecognized object")
+    return G
 
 
 def create_visualization_from_graph():
