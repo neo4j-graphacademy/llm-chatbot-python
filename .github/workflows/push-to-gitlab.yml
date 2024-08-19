@@ -1,0 +1,23 @@
+name: Push changes to Gitlab
+on:
+  push:
+    branches:
+      - main
+      - master
+  release:
+    types: [released]
+
+jobs:
+  push_to_codebase:
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: '${{ github.event.repository.default_branch }}'
+          fetch-depth: 0
+      - name: Push to GitLab
+        run: |
+          git remote add codebase https://${{ secrets.CODEBASE_USER_NAME }}:${{ secrets.CODEBASE_ACCESS_TOKEN }}@${{ secrets.CODEBASE_URL }}
+          git remote -v
+          git push --tags codebase "${{ github.event.repository.default_branch }}"
