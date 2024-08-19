@@ -9,13 +9,18 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="6">
+          <list size="11">
             <item index="0" class="java.lang.String" itemvalue="rdkit" />
             <item index="1" class="java.lang.String" itemvalue="dfpl" />
             <item index="2" class="java.lang.String" itemvalue="dataclasses" />
             <item index="3" class="java.lang.String" itemvalue="scikit-learn" />
             <item index="4" class="java.lang.String" itemvalue="jsonpickle" />
             <item index="5" class="java.lang.String" itemvalue="setuptools" />
+            <item index="6" class="java.lang.String" itemvalue="tensorflow" />
+            <item index="7" class="java.lang.String" itemvalue="pytest" />
+            <item index="8" class="java.lang.String" itemvalue="numpy" />
+            <item index="9" class="java.lang.String" itemvalue="tensorflow-gpu" />
+            <item index="10" class="java.lang.String" itemvalue="wandb" />
           </list>
         </value>
       </option>
@@ -23,7 +28,7 @@
     <inspection_tool class="PyPep8NamingInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="ignoredErrors">
         <list>
-          <option value="N806" />
+          <option value="N802" />
         </list>
       </option>
     </inspection_tool>
