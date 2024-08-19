@@ -10,7 +10,7 @@ EcoToxFred is a friendly and intuitive chatbot designed to help researchers, sta
 By leveraging advanced language models and a graph database, EcoToxFred makes complex environmental toxicology data accessible and understandable for everyone, regardless of technical background.
 </p>
 
-<p><img align="center" width="400" src="figures/show_tool.png" /></p>
+<p align="center"><img width="400" src="figures/show_tool.png" /></p>
 
 In its currently trained state, it can
 
