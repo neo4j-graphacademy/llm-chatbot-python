@@ -1,9 +1,19 @@
-= Build an Neo4j-backed Chatbot using Python
+= EcoToxFred - Dialogues with a Knowledge Keeper
 
-This repository accompanies the link:https://graphacademy.neo4j.com/courses/llm-chatbot-python/?ref=github[Build an Neo4j-backed Chatbot using Python^] course on link:https://graphacademy.neo4j.com/?ref=github[Neo4j GraphAcademy^].
+Here, we present EcoToxFred, a Neo4j-backed Chatbot with whom you can discuss environmental monitoring data collected in a large knowledge graph and stored in a Neo4j Graph Database.
 
-For a complete walkthrough of this repository, link:https://graphacademy.neo4j.com/courses/llm-chatbot-python/?ref=github[enrol now^].
+*EcoToxFred is a prototype* that demonstrates how domain-specific knowledge can be combined with LLMs to facilitate the interaction of researchers, stakeholders, or general users with the knowledge.
 
+EcoToxFred can answer questions about chemicals and their measured concentrations in European surface waters like rivers and lakes. 
+
+In its currently trained state, it can
+
+- provide general information about rivers, lakes, or substances
+- provide sampling sites where individual (sets of) chemicals have been measured and detected at which concentrations
+- plot measured concentrations across time and/or sampling sites
+- find all substances measured at a certain sampling site (identified by country, water body, or coordinate range)
+- identify the most frequent drivers in regions (countries, water bodies, Europe)
+- extract summarized risk for regions or species
 
 == Running the application
 
@@ -17,3 +27,8 @@ Then run the `streamlit run` command to start the app on link:http://localhost:8
 
 [source,sh]
 streamlit run bot.py
+
+== Contributing
+
+You may experience that *EcoToxFred* does not provide appropriate responses. Please provide your query and your expected response and we will improve LLM prompts, provide more examples for zero-shot and few-shot learning, and if necessary even make improvements or adjustments to our Neo4j database (e.g., by integrating additional knowledge).
+
