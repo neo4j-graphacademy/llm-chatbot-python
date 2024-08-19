@@ -4,7 +4,9 @@ Here, we present EcoToxFred, a Neo4j-backed Chatbot with whom you can discuss en
 
 *EcoToxFred is a prototype* that demonstrates how domain-specific knowledge can be combined with LLMs to facilitate the interaction of researchers, stakeholders, or general users with the knowledge.
 
-EcoToxFred can answer questions about chemicals and their measured concentrations in European surface waters like rivers and lakes. 
+<img align="left" style="margin-right:10px;" src="figures/assistant.png"> EcoToxFred can answer questions about chemicals and their measured concentrations in European surface waters like rivers and lakes. 
+EcoToxFred is a friendly and intuitive chatbot designed to help researchers, stakeholders, and users explore and analyze chemical concentrations and toxicity data in European surface waters. 
+By leveraging advanced language models and a graph database, EcoToxFred makes complex environmental toxicology data accessible and understandable for everyone, regardless of technical background.
 
 In its currently trained state, it can
 
