@@ -1,0 +1,68 @@
+image: docker:20.10.9-alpine3.14
+
+stages:
+  - build
+  - deploy
+
+services:
+  - docker:20.10.9-dind-alpine3.14
+
+before_script:
+  # docker login asks for the password to be passed through stdin for security
+  # we use $CI_JOB_TOKEN here which is a special token provided by GitLab
+  - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+  #- echo $DockerHub_Token | docker login -u $DockerHub_User --password-stdin $DockerHub_Registry
+
+
+build:
+  stage: build
+  only:
+    - tags
+  timeout: 2 hours
+  ## use tags to get the correct runner, that has docker installed
+  tags:
+    - docker
+    - dind
+
+  script:
+    # builds the project, passing proxy variables, and vcs vars for LABEL
+    # the built image is tagged locally with the tag, and then pushed to
+    # the GitLab registry
+    - >
+      docker build
+      --build-arg VCS_REF=$CI_COMMIT_REF_NAME
+      --build-arg VCS_URL=$CI_PROJECT_URL
+      --no-cache
+      --tag $CI_REGISTRY_IMAGE/ecotoxfred:$CI_COMMIT_REF_NAME
+      -f container/Dockerfile
+      .
+
+    # run tests
+    - docker run $CI_REGISTRY_IMAGE/ecotoxfred:$CI_COMMIT_REF_NAME pytest /deepFPlearn/tests/
+    - docker run $CI_REGISTRY_IMAGE/ecotoxfred:$CI_COMMIT_REF_NAME dfpl --help
+
+    # push in the gitlab registry
+    - docker push $CI_REGISTRY_IMAGE/ecotoxfred:$CI_COMMIT_REF_NAME
+
+deploy latest:
+  stage: deploy
+  only:
+    - tags
+
+  variables:
+    # We are just playing with Docker here.
+    # We do not need GitLab to clone the source code.
+    GIT_STRATEGY: none
+
+  tags:
+    - docker
+    - dind
+
+  script:
+    # Because we have no guarantee that this job will be picked up by the same runner
+    # that built the image in the previous step, we pull it again locally
+    - docker pull $CI_REGISTRY_IMAGE/ecotoxfred:$CI_COMMIT_REF_NAME
+    # Then we tag it "latest"
+    - docker tag $CI_REGISTRY_IMAGE/ecotoxfred:$CI_COMMIT_REF_NAME $CI_REGISTRY_IMAGE/ecotoxfred:latest
+    # Push it.
+    - docker push $CI_REGISTRY_IMAGE/ecotoxfred:latest

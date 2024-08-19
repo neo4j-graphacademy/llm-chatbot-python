@@ -2,12 +2,14 @@
 
 Here, we present EcoToxFred, a Neo4j-backed Chatbot with whom you can discuss environmental monitoring data collected in a large knowledge graph and stored in a Neo4j Graph Database.
 
-**EcoToxFred is a prototype** that demonstrates how domain-specific knowledge can be combined with LLMs to facilitate the interaction of researchers, stakeholders, or general users with the knowledge.
+**EcoToxFred is a prototype** that demonstrates how domain-specific knowledge can be combined with LLMs to 
+facilitate the interaction between users and (domain-specific) knowledge.
 
 <p><img align="left" width="100" src="figures/assistant.png" />
 EcoToxFred can answer questions about chemicals and their measured concentrations in European surface waters like rivers and lakes.
 EcoToxFred is a friendly and intuitive chatbot designed to help researchers, stakeholders, and users explore and analyze chemical concentrations and toxicity data in European surface waters.
-By leveraging advanced language models and a graph database, EcoToxFred makes complex environmental toxicology data accessible and understandable for everyone, regardless of technical background.
+By leveraging advanced language models and a graph database, EcoToxFred makes complex environmental toxicology data 
+accessible and understandable for everyone, regardless of their technical background.
 </p>
 
 <p align="center"><img width="400" src="figures/show_tool.png" /></p>
@@ -20,6 +22,11 @@ In its currently trained state, it can
 - find all substances measured at a certain sampling site (identified by country, water body, or coordinate range)
 - identify the most frequent drivers in regions (countries, water bodies, Europe)
 - extract summarized risk for regions or species
+
+Upcoming skills are
+
+- plot requested information on a map of the selected region
+- provide subgraphs of graph database results, ready to be used in Cytoscape or else
 
 ## Running the application
 
