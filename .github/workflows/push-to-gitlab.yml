@@ -18,6 +18,6 @@ jobs:
           fetch-depth: 0
       - name: Push to GitLab
         run: |
-          git remote add codebase "https://${{ secrets.CODEBASE_USER_NAME }}:${{ secrets.CODEBASE_ACCESS_TOKEN }}@codebase.helmholtz.cloud/ufz/tb3-cite/cbc/EcoToxFred.git"
+          git remote add codebase "https://${{ secrets.CODEBASE_USER_NAME }}:${{ secrets.CODEBASE_ACCESS_TOKEN }}@${{ secrets.CODEBASE_URL }}"
           git remote -v
           git push --tags codebase "${{ github.event.repository.default_branch }}"
