@@ -47,6 +47,6 @@ streamlit run bot.py
 
 You may experience that *EcoToxFred* does not provide appropriate responses. Please provide your query and your expected response and we will improve LLM prompts, provide more examples for zero-shot and few-shot learning, and if necessary even make improvements or adjustments to our Neo4j database (e.g., by integrating additional knowledge).
 
-== Contact
+## Contact
 
 Jana Schor - jana.schor@ufz.de
