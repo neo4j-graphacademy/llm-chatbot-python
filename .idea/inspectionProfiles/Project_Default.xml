@@ -28,7 +28,6 @@
     <inspection_tool class="PyPep8NamingInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="ignoredErrors">
         <list>
-          <option value="N806" />
           <option value="N802" />
         </list>
       </option>

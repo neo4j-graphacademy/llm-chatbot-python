@@ -1,8 +1,9 @@
 import streamlit as st
 from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
 
+
 # tag::write_message[]
-def write_message(role, content, save = True):
+def write_message(role, content, save=True):
     """
     This is a helper function that saves a message to the
      session state and then writes a message to the UI
@@ -12,8 +13,17 @@ def write_message(role, content, save = True):
         st.session_state.messages.append({"role": role, "content": content})
 
     # Write to UI
-    with st.chat_message(role):
-        st.markdown(content)
+    if role == 'assistant':
+        with st.chat_message(role, avatar="figures/assistant.png"):
+            st.markdown(content)
+    elif role == 'user':
+        with st.chat_message(role, avatar="figures/user.png"):
+            st.markdown(content)
+    else:
+        with st.chat_message(role):
+            st.markdown(content)
+
+
 # end::write_message[]
 
 # tag::get_session_id[]
