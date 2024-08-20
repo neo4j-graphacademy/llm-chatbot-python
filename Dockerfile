@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-FROM python:3.10 as builder
+FROM python:3.12 as builder
 
 WORKDIR /app
 
@@ -16,11 +16,12 @@ RUN pip install --upgrade pip && \
     pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
 
 
-FROM python:3.10
+FROM python:3.12
 
 RUN apt update && apt upgrade -y -qq \
     && rm -rf /var/lib/apt/lists/*
 
+RUN groupadd -r ecotoxfred && useradd -r -g ecotoxfred -m -d /home/ecotoxfred -s /bin/sh -c "ecotoxfred User" ecotoxfred
 WORKDIR /app
 
 COPY --from=builder /app/wheels /wheels
@@ -29,24 +30,16 @@ COPY --from=builder /app/requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache /wheels/*
 
+RUN mkdir -p /app/.config/matplotlib && chown -R ecotoxfred:ecotoxfred /app
+ENV MPLCONFIGDIR /app/.config/matplotlib
+
 # Change User to a Non-Root user
-USER 1000
+USER ecotoxfred
 
 # Copy your source code to image workdir
 COPY *.py .
 COPY figures/ figures/
 COPY tools/ tools/
-
-# Environment variable to set when container is started (-e MY_OTHER_ENV_VAR=value)
-ENV OPENAI_API_KEY ""
-ENV OPENAI_MODEL ""
-ENV NEO4J_URI ""
-ENV NEO4J_USERNAME ""
-ENV NEO4J_PASSWORD ""
-
-
-VOLUME .streamlit
-VOLUME /.config/matplotlib
 
 # indicates the container port, which is exposed to the host
 EXPOSE 8501
