@@ -11,19 +11,11 @@ def connect_to_neo4j() -> Neo4jGraph:
     Returns:
         Neo4jGraph: The Neo4j graph instance
     """
-    if not os.environ.get('NEO4J_URI'):
-        # return ()
-        return Neo4jGraph(
-            url=st.secrets["NEO4J_URI"],
-            username=st.secrets["NEO4J_USERNAME"],
-            password=st.secrets["NEO4J_PASSWORD"]
-        )
-    else:
-        return Neo4jGraph(
-            url=os.environ.get("NEO4J_URI"),
-            username=os.environ.get("NEO4J_USERNAME"),
-            password=os.environ.get("NEO4J_PASSWORD")
-        )
+    return Neo4jGraph(
+        url=st.secrets["NEO4J_URI"],
+        username=st.secrets["NEO4J_USERNAME"],
+        password=st.secrets["NEO4J_PASSWORD"]
+    )
 
 
 # Connect to Neo4j and provide the graph as

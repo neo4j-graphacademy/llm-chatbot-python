@@ -30,8 +30,7 @@ RUN pip install --upgrade pip && \
     pip install --no-cache /wheels/*
 
 # Change User to a Non-Root user
-#USER UID
-# JS: Do I need this?
+USER 1000
 
 # Copy your source code to image workdir
 COPY *.py .
@@ -46,7 +45,8 @@ ENV NEO4J_USERNAME ""
 ENV NEO4J_PASSWORD ""
 
 
-VOLUME /secrets
+VOLUME .streamlit
+VOLUME /.config/matplotlib
 
 # indicates the container port, which is exposed to the host
 EXPOSE 8501

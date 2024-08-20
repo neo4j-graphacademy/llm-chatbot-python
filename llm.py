@@ -11,17 +11,10 @@ def get_chat_llm() -> ChatOpenAI:
     Returns:
         ChatOpenAI: The ChatOpenAI LLM
     """
-    if not os.environ.get('OPENAI_API_KEY'):
-        # return ()
-        return ChatOpenAI(
-            openai_api_key=st.secrets["OPENAI_API_KEY"],
-            model=st.secrets["OPENAI_MODEL"]
-        )
-    else:
-        return ChatOpenAI(
-            openai_api_key=os.environ.get("OPENAI_API_KEY"),
-            model=os.environ.get("OPENAI_MODEL")
-        )
+    return ChatOpenAI(
+        openai_api_key=st.secrets["OPENAI_API_KEY"],
+        model=st.secrets["OPENAI_MODEL"]
+    )
 
 
 def create_embeddings() -> OpenAIEmbeddings:
