@@ -68,5 +68,6 @@ cypher_qa = GraphCypherQAChain.from_llm(
     llm,
     graph=graph,
     verbose=True,
-    cypher_prompt=cypher_prompt
+    cypher_prompt=cypher_prompt,
+    allow_dangerous_requests=True
 )

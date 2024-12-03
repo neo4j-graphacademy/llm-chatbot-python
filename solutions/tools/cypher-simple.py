@@ -10,6 +10,7 @@ from langchain_neo4j import GraphCypherQAChain
 cypher_qa = GraphCypherQAChain.from_llm(
     llm,
     graph=graph,
-    verbose=True
+    verbose=True,
+    allow_dangerous_requests=True
 )
 # end::cypher-qa[]
