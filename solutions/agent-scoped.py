@@ -6,7 +6,7 @@ from langchain_core.prompts import PromptTemplate
 # end::import_prompt[]
 from langchain.schema import StrOutputParser
 from langchain.tools import Tool
-from langchain_community.chat_message_histories import Neo4jChatMessageHistory
+from langchain_neo4j import Neo4jChatMessageHistory
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain import hub
