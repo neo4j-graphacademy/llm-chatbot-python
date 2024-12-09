@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
+from streamlit.runtime.scriptrunner import get_script_run_ctx
 
 # tag::write_message[]
 def write_message(role, content, save = True):
@@ -18,5 +18,9 @@ def write_message(role, content, save = True):
 
 # tag::get_session_id[]
 def get_session_id():
-    return get_script_run_ctx().session_id
+    """Get the current session ID"""
+    ctx = get_script_run_ctx()
+    if ctx is None:
+        return None
+    return ctx.session_id
 # end::get_session_id[]
