@@ -15,7 +15,7 @@ from tools.cypher import cypher_qa
 
 chat_prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "You are a data analytics expert providing information about products, orders, and customers in the Northwind database."),
+        ("system", "You are a company internal service expert chatbot providing information about products, orders, and customers in the Northwind database. "),
         ("human", "{input}"),
     ]
 )
@@ -25,7 +25,7 @@ movie_chat = chat_prompt | llm | StrOutputParser()
 tools = [
     Tool.from_function(
         name="General Chat",
-        description="For general chat not covered by other tools",
+        description="For general chat about the company and its products and services not covered by other tools, Useful for answering generic questions about the company and its products and services",
         func=movie_chat.invoke,
     ), 
     # Tool.from_function(

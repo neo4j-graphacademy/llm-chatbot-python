@@ -3,6 +3,7 @@ from llm import llm
 from graph import graph
 from langchain_neo4j import GraphCypherQAChain
 from langchain_core.prompts import PromptTemplate
+from neo4j.exceptions import ClientError, TransientError, DatabaseError
 
 CYPHER_GENERATION_TEMPLATE = """
 You are an expert Neo4j Developer translating user questions into Cypher to answer questions about products, orders, and customers in the Northwind database.
@@ -46,6 +47,58 @@ Question:
 """
 
 cypher_prompt = PromptTemplate.from_template(CYPHER_GENERATION_TEMPLATE)
+
+def execute_cypher_query(question):
+    try:
+        response = cypher_qa(question)
+        
+        # Check if the response contains an error message
+        if isinstance(response, str) and "ERROR:" in response:
+            return {
+                "error": {
+                    "type": "invalid_query",
+                    "message": response.split("ERROR: ")[1],
+                    "suggestion": "Please ask about entities that exist in the database schema."
+                }
+            }
+        
+        return {"result": response}
+        
+    except ClientError as e:
+        return {
+            "error": {
+                "type": "client_error",
+                "message": str(e),
+                "suggestion": "Please check your query syntax and ensure all referenced entities exist."
+            }
+        }
+        
+    except TransientError as e:
+        return {
+            "error": {
+                "type": "transient_error",
+                "message": str(e),
+                "suggestion": "The database is temporarily unavailable. Please try again in a few moments."
+            }
+        }
+        
+    except DatabaseError as e:
+        return {
+            "error": {
+                "type": "database_error",
+                "message": str(e),
+                "suggestion": "There was an issue with the database. Please contact support if this persists."
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "error": {
+                "type": "unknown_error",
+                "message": str(e),
+                "suggestion": "An unexpected error occurred. Please try a different query."
+            }
+        }
 
 cypher_qa = GraphCypherQAChain.from_llm(
     llm,
