@@ -3,7 +3,7 @@ from llm import llm, embeddings
 from graph import graph
 
 # tag::import_vector[]
-from langchain_community.vectorstores.neo4j_vector import Neo4jVector
+from langchain_neo4j import Neo4jVector
 # end::import_vector[]
 # tag::import_chain[]
 from langchain.chains.combine_documents import create_stuff_documents_chain

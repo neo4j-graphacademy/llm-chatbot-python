@@ -1,4 +1,4 @@
-from langchain.chains import GraphCypherQAChain
+from langchain_neo4j import GraphCypherQAChain
 # tag::import-prompt-template[]
 from langchain.prompts.prompt import PromptTemplate
 # end::import-prompt-template[]
@@ -41,6 +41,7 @@ cypher_qa = GraphCypherQAChain.from_llm(
     llm,
     graph=graph,
     verbose=True,
-    cypher_prompt=cypher_prompt
+    cypher_prompt=cypher_prompt,
+    allow_dangerous_requests=True
 )
 # end::cypher-qa[]
