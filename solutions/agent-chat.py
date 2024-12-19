@@ -11,7 +11,7 @@ from langchain.tools import Tool
 # end::import_tool[]
 
 # tag::import_memory[]
-from langchain_community.chat_message_histories import Neo4jChatMessageHistory
+from langchain_neo4j import Neo4jChatMessageHistory
 # end::import_memory[]
 
 # tag::import_agent[]
