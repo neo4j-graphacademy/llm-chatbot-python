@@ -1,8 +1,8 @@
 from langchain_neo4j import GraphCypherQAChain
 from langchain.prompts.prompt import PromptTemplate
 
-from solutions.llm import llm
-from solutions.graph import graph
+from llm import llm
+from graph import graph
 
 CYPHER_GENERATION_TEMPLATE = """
 You are an expert Neo4j Developer translating user questions into Cypher to answer questions about movies and provide recommendations.

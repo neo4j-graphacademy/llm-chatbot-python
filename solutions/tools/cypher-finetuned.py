@@ -3,8 +3,8 @@ from langchain_neo4j import GraphCypherQAChain
 from langchain.prompts.prompt import PromptTemplate
 # end::import-prompt-template[]
 
-from solutions.llm import llm
-from solutions.graph import graph
+from llm import llm
+from graph import graph
 
 # tag::prompt[]
 CYPHER_GENERATION_TEMPLATE = """
