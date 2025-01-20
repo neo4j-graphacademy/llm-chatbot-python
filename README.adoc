@@ -17,3 +17,23 @@ Then run the `streamlit run` command to start the app on link:http://localhost:8
 
 [source,sh]
 streamlit run bot.py
+
+== Tests
+
+To run the solution tests: 
+
+. Create Neo4j instance with the `recommendations` dataset
+. Run the link:https://raw.githubusercontent.com/neo4j-graphacademy/courses/refs/heads/main/asciidoc/courses/llm-chatbot-python/modules/3-tools/lessons/1-vector-tool/reset.cypher[Cypher to add embeddings and create the vector index^].
+. Create a virtual environment and install the requirements.
++ 
+[source,sh]
+pip install -r requirements.txt
+. Install `pytest`
++
+[source,sh]
+pip install pytest
+. Create a `secrets.toml` file in the `.streamlit` directory. Use `secrets.toml.example` as a template.
+. Run the tests
++
+[source,sh]
+pytest
