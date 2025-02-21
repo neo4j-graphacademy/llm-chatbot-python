@@ -1,0 +1,7 @@
+= INSTRUCTIONS
+
+This repository accompanies the link:https://graphacademy.neo4j.com/courses/llm-chatbot-python/[Build a Neo4j-backed Chatbot using Python course^] on link:https://graphacademy.neo4j.com[GraphAcademy^].
+
+When the devcontainer is created, such as in a GitHub codespace, all the required software and packages will be installed.
+
+Follow the link:https://graphacademy.neo4j.com/courses/llm-chatbot-python/1-project-setup/2-setup/[Setup Instructions in GraphAcademy] to get started.
