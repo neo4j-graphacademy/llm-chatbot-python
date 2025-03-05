@@ -14,7 +14,7 @@
 	"customizations": {
 		"codespaces": {
 			"openFiles": [
-				"INSTRUCTIONS.adoc",
+				"SETUP.md",
 				"bot.py",
 				".streamlit/.streamlit.toml.example"
 				]
