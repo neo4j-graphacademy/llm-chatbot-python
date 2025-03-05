@@ -16,7 +16,7 @@
 			"openFiles": [
 				"SETUP.md",
 				"bot.py",
-				".streamlit/.streamlit.toml.example"
+				".streamlit/secrets.toml.example"
 				]
 		},
 		"vscode": {
