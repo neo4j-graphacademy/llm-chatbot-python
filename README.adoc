@@ -1,9 +1,10 @@
 = Build an Neo4j-backed Chatbot using Python
 
-This repository accompanies the link:https://graphacademy.neo4j.com/courses/llm-chatbot-python/?ref=github[Build an Neo4j-backed Chatbot using Python^] course on link:https://graphacademy.neo4j.com/?ref=github[Neo4j GraphAcademy^].
+This repository accompanies the link:https://graphacademy.neo4j.com/courses/llm-chatbot-python[Build an Neo4j-backed Chatbot using Python^] course on link:https://graphacademy.neo4j.com/?ref=github[Neo4j GraphAcademy^].
 
 For a complete walkthrough of this repository, link:https://graphacademy.neo4j.com/courses/llm-chatbot-python/?ref=github[enrol now^].
 
+link:https://codespaces.new/neo4j-graphacademy/llm-chatbot-python[image:https://github.com/codespaces/badge.svg[Open in GitHub Codespaces]^]
 
 == Running the application
 
