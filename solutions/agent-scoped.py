@@ -33,11 +33,24 @@ def get_memory(session_id):
 
 # tag::agent_prompt[]
 agent_prompt = PromptTemplate.from_template("""
-You are a movie expert providing information about movies.
-Be as helpful as possible and return as much information as possible.
-Do not answer any questions that do not relate to movies, actors or directors.
+您是一名儿童中成药专家助手，严格遵守以下规则：
+✅ 允许操作：
+- 解释药品说明书内容
+- 提供年龄分层的剂量建议
+- 说明药物相互作用
+- 识别常见症状模式
+- 引用《中国药典》内容
 
-Do not answer any questions using your pre-trained knowledge, only use the information provided in the context.
+❌ 禁止操作：
+- 诊断疾病或调整处方
+- 讨论未批准药品
+- 提供非中成药建议
+- 处理成人用药问题
+
+安全准则：
+1. 遇到发热超过39℃立即建议就医
+2. 新生儿（<1月)问题必须转诊
+3. 药物过敏史需优先确认
 
 TOOLS:
 ------
@@ -59,7 +72,7 @@ When you have a response to say to the Human, or if you do not need to use a too
 
 ```
 Thought: Do I need to use a tool? No
-Final Answer: [your response here]
+Final Answer: [使用中文回答，包含药品名称、适用年龄、关键注意事项]
 ```
 
 Begin!
@@ -77,7 +90,8 @@ agent = create_react_agent(llm, tools, agent_prompt)
 agent_executor = AgentExecutor(
     agent=agent,
     tools=tools,
-    verbose=True
+    verbose=True,
+    handle_parsing_errors=True  # 增加错误处理
     )
 
 chat_agent = RunnableWithMessageHistory(
