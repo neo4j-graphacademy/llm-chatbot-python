@@ -7,5 +7,6 @@ graph = Neo4jGraph(
     url=st.secrets["NEO4J_URI"],
     username=st.secrets["NEO4J_USERNAME"],
     password=st.secrets["NEO4J_PASSWORD"],
+    database=st.secrets["NEO4J_DATABASE"],
 )
 #end::graph[]
