@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
+from streamlit.runtime.scriptrunner.script_runner import get_script_run_ctx
 
 # tag::write_message[]
 def write_message(role, content, save = True):
